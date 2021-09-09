@@ -3,9 +3,8 @@ FHA_MININUM = 3.5
 class RealEstateCalc:
     def __init__(self, cost, num_plex, rental_value_per_plex):
         self.cost = cost
-        self.num_plex = num_plex - 1
+        self.num_plex = num_plex
         self.rental_value_per_plex = rental_value_per_plex
-        self.mortgage_magic = 0.00449044688
         self.principal = self.cost
     
     def get_down_payment(self, percent_down=FHA_MININUM):
@@ -14,8 +13,18 @@ class RealEstateCalc:
     def get_principal(self, percent_down=FHA_MININUM):
         return self.cost - self.get_down_payment(percent_down)
     
-    def get_mortgage_monthly(self, percent_down=FHA_MININUM):
-        return self.get_principal(percent_down) * self.mortgage_magic
+    def get_mortgage_magic(self, r, n):
+        numerator = r * pow(1 + r, n)
+        denominator = pow(1 + r, n) - 1
+        magic = (numerator / denominator)
+        return magic
+    
+    def get_mortgage_monthly(self, interest_rate=3.05, loan_term_years=30, percent_down=FHA_MININUM):
+        monthly_interest_rate = (interest_rate / 100.0) / 12.0
+        total_loan_payments = loan_term_years * 12
+        mortgage_magic = self.get_mortgage_magic(monthly_interest_rate, total_loan_payments)
+
+        return self.get_principal(percent_down) * mortgage_magic
     
     def get_cash_flow(self, percent_down=FHA_MININUM):
         after_expenses = (self.num_plex * self.rental_value_per_plex) / 2.0
@@ -53,5 +62,30 @@ class RealEstateCalc:
         elif cash_flow_per_plex < 0:
             print("\t\tNegative cash flow.")
 
-comp = RealEstateCalc(299900, 3, 2000)
-comp.generate_report(3.5)
+if __name__ == "__main__":
+    try:
+        cost = int(input("Cost of property (numeric, e.g., 299900): "))
+    except ValueError:
+        print("Invalid number. Assuming 299000")
+        cost = 299000
+    
+    try:
+        num_plex = int(input("Number of rentable units (numeric, e.g., 2 = Duplex): "))
+    except ValueError:
+        print("Invalid number. Assuming 2")
+        num_plex = 2
+    
+    try:
+        avg_rent = int(input("Expected income per unit (numeric, e.g., 2000): "))
+    except ValueError:
+        print("Invalid number. Assuming 2000")
+        avg_rent = 2000
+    
+    try:
+        percent_down = float(input("Percent down (numeric, e.g., 3.5): "))
+    except ValueError:
+        print("Invalid number. Assuming 3.5")
+        percent_down = 3.5
+
+    comp = RealEstateCalc(cost, num_plex, avg_rent)
+    comp.generate_report(percent_down)
