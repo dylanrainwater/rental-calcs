@@ -65,26 +65,26 @@ class RealEstateCalc:
 if __name__ == "__main__":
     try:
         cost = int(input("Cost of property (numeric, e.g., 299900): "))
-    except ValueError:
-        print("Invalid number. Assuming 299000")
+    except:
+        print("Invalid number. Assuming 299000\n")
         cost = 299000
     
     try:
         num_plex = int(input("Number of rentable units (numeric, e.g., 2 = Duplex): "))
-    except ValueError:
-        print("Invalid number. Assuming 2")
+    except:
+        print("Invalid number. Assuming 2\n")
         num_plex = 2
     
     try:
         avg_rent = int(input("Expected income per unit (numeric, e.g., 2000): "))
-    except ValueError:
-        print("Invalid number. Assuming 2000")
+    except:
+        print("Invalid number. Assuming 2000\n")
         avg_rent = 2000
     
     try:
         percent_down = float(input("Percent down (numeric, e.g., 3.5): "))
-    except ValueError:
-        print("Invalid number. Assuming 3.5")
+    except:
+        print("Invalid number. Assuming 3.5\n")
         percent_down = 3.5
 
     comp = RealEstateCalc(cost, num_plex, avg_rent)
